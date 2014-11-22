@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+import os
+import sys
+
+import extralarge.util
+import extralarge.dispatch
+
+for fp in (sys.stdin, sys.stdout, sys.stderr):
+    extralarge.util.setbinary(fp)
+
+extralarge.dispatch.run()
+
+
