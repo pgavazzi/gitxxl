@@ -1,0 +1,9 @@
+Babel==1.3
+cffi==0.8.6
+gitxxl==unknown
+i18n==0.2
+py==1.4.26
+pycparser==2.10
+pygit2==0.21.4
+pytz==2014.9
+wsgiref==0.1.2
