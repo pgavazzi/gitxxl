@@ -59,7 +59,7 @@ extmodules = []
 
 packagedata = {'gitxxl': []}
 
-datafiles = []
+datafiles = [('dist/hooks', ['dist/hooks/post-commit', 'dist/hooks/pre-commit'])]
 
 setupversion = version
 
