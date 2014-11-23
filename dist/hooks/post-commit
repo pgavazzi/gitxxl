@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+import os
+import sys
+import magic
+
+import extralarge.util
+import extralarge.dispatch
+import extralarge.git
+
+from pygit2 import Repository, Object, discover_repository
+
+repository_path = discover_repository(os.getcwd())
+xxl_path = os.path.normpath(repository_path)+'xxl'
+repo = Repository(repository_path)
+print "repo:",repo, repo.is_bare, repo.is_empty
+commit = repo.revparse_single('HEAD')
+print "commit:",commit
+diff = repo.diff('HEAD')
+print "diff:",diff
+patches = [p for p in diff]
+print "patches:", patches
+tree = repo.revparse_single('HEAD').tree
+diff2 = tree.diff_to_tree()
+print "tree:",tree, " diff2:",diff2
+patches2 = [p for p in diff2]
+print "patches2:", patches2
+for patch in patches2:
+	print patch.old_file_path, patch.new_file_path, patch.old_id, patch.new_id, patch.status, patch.additions, patch.deletions, patch.is_binary, patch.hunks
+	print "move impostor to .gitxxl"
+	oid_path = os.path.join(xxl_path, patch.old_id, patch.old_file_path)
+	new_path = oid_path+'.xxl'
+	os.rename(patch.old_file_path,new_path)
+	print "move-back real binary"
+	os.rename(oid_path,patch.new_file_path)
+
+sys.exit(0)
+
+

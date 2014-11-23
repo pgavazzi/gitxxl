@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+import os
+import sys
+import magic
+
+import extralarge.util
+import extralarge.dispatch
+import extralarge.git
+
+from pygit2 import Repository, Object, discover_repository
+import json
+
+repository_path = discover_repository(os.getcwd())
+xxl_path = os.path.normpath(repository_path)+'xxl'
+repo = Repository(repository_path)
+print "repo:",repo, repo.is_bare, repo.is_empty
+index = repo.index
+print "index:",index
+index.read()
+m = magic.Magic(mime_encoding=True)
+continue_with_commit = False
+for entry in index:
+	print entry.path, entry.hex, m.from_file(entry.path)
+	if m.from_file(entry.path) == 'binary':
+		print "new entry, or modified entry:", "new"
+		print "creating .gitxxl entry for hex:", entry.hex 
+		hex_path = os.path.join(xxl_path, entry.hex)
+		os.mkdir(hex_path)
+		print "moving ", entry.path
+		new_path = os.path.join(hex_path,os.path.basename(entry.path))
+		os.rename(entry.path,new_path)
+		print "creating impostor", entry.path
+		with open(entry.path, 'w') as fout:
+			fout.write(json.dumps({'oid': entry.hex, 'commit': ""}))
+    	sys.exit(0)
+
+print "cancelling due to gitxxl pre-commit hook FAILED."
+sys.exit(1)
+
+
